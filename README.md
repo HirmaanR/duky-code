@@ -1,3 +1,5 @@
+![ducky-code](./img/duky.png)
+
 # 🦆 Ducky AI Assistant
 
 Your intelligent terminal-based coding companion, inspired by Claude Code but with a friendly duck personality!

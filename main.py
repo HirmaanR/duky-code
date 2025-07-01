@@ -116,14 +116,11 @@ class DuckyAI:
         logo_text = Text(DUCKY_LOGO, style=COLORS['accent'])
         console.print(logo_text, justify="center")
         
-        # Welcome message
-        welcome_panel = Panel(
+        # Welcome message - no border
+        console.print(
             Text("Welcome to Ducky AI! 🦆\nYour intelligent coding companion", 
-                 style="bold", justify="center"),
-            border_style=COLORS['primary'],
-            padding=(1, 2)
+                 style="bold", justify="center")
         )
-        console.print(welcome_panel)
         console.print()
     
     def verify_api_key(self, api_key):
@@ -159,14 +156,12 @@ class DuckyAI:
     
     def setup_api_key(self):
         """Handle API key setup process"""
-        console.print(Panel(
-            "🔑 API Key Setup Required\n\n"
-            "Ducky needs an OpenAI API key to function.\n"
-            "You can get one from: https://platform.openai.com/api-keys\n\n"
-            "Your key will be stored securely in ~/.ducky/config.json",
-            title="Setup Required",
-            border_style=COLORS['warning']
-        ))
+        # Setup message - no border
+        console.print("🔑 API Key Setup Required", style="bold")
+        console.print()
+        console.print("Ducky needs an OpenAI API key to function.")
+        console.print("You can get one from: https://platform.openai.com/api-keys")
+        console.print("Your key will be stored securely in ~/.ducky/config.json")
         console.print()
         
         while True:
@@ -186,7 +181,7 @@ class DuckyAI:
             if success:
                 if self.config.set_api_key(api_key):
                     console.print(f"✅ API key verified and saved!", style=COLORS['success'])
-                    console.print(Panel(message, border_style=COLORS['success']))
+                    console.print(message, style=COLORS['success'])
                     self.api_key = api_key
                     # Initialize the OpenAI client
                     self.client = OpenAI(
@@ -236,12 +231,10 @@ class DuckyAI:
         """Format and display AI response with proper styling"""
         console.print()
         
-        # Response header
-        header = Panel(
-            Text("🦆 Ducky's Response", style="bold"),
-            border_style=COLORS['accent'],
-        )
-        console.print(header)
+        # Response header - no border
+        # console.print("🦆 Ducky's Response", style="bold " + COLORS['accent'])
+        console.rule("Duky",style=COLORS['accent'])
+        console.print()
         
         # Check if response contains code blocks
         code_pattern = r'```(\w+)?\n(.*?)\n```'
@@ -257,41 +250,58 @@ class DuckyAI:
             else:  # Code block
                 language = parts[i-1] if parts[i-1] else "text"
                 syntax = Syntax(part.strip(), language, theme="monokai", background_color=COLORS['code_bg'])
+                # Code still gets a border for readability
                 console.print(Panel(syntax, border_style=COLORS['muted']))
                 
                 # Show copy hint
                 console.print(f"💡 Tip: You can copy this {language} code", style=COLORS['muted'])
         
         console.print()
+        console.rule(style=COLORS['accent'])
     
     def main_loop(self):
         """Main interaction loop"""
-        console.print(Panel(
-            "🦆 Ducky is ready! Type your programming questions or requests.\n"
-            "Commands: 'exit' or 'quit' to leave, 'clear' to clear screen",
-            border_style=COLORS['primary']
-        ))
+        # Instructions - no border
+        console.print("🦆 Ducky is ready! Type your programming questions or requests.")
+        console.print("Commands: 'exit' or 'quit' to leave, 'clear' to clear screen", style=COLORS['muted'])
         
         while True:
             try:
                 console.print()
-                user_input = Prompt.ask(
-                    "[bold]🦆 You[/bold]",
-                    console=console
-                ).strip()
                 
-                if not user_input:
+                # Display empty bordered input box first
+                # empty_panel = Panel(
+                #     "",
+                #     border_style=COLORS['primary'],
+                #     height=3,
+                #     title="You",
+                #     title_align="left"
+                # )
+                # console.print(empty_panel)
+                
+                # print divider in console
+                console.rule("You",style=COLORS['primary'])
+
+                # Get user input
+                raw_input = Prompt.ask(
+                    " ",
+                    console=console,
+                ).strip()
+                # print divider in console
+                console.rule(style=COLORS['primary'])
+                
+                if not raw_input:
                     continue
                     
-                if user_input.lower() in ['exit', 'quit', 'bye']:
+                if raw_input.lower() in ['exit', 'quit', 'bye']:
                     console.print("👋 Goodbye! Happy coding!", style=COLORS['accent'])
                     break
-                elif user_input.lower() == 'clear':
+                elif raw_input.lower() == 'clear':
                     self.show_welcome()
                     continue
                 
                 # Send message to AI
-                success, response = self.send_message(user_input)
+                success, response = self.send_message(raw_input)
                 
                 if success:
                     self.format_response(response)
