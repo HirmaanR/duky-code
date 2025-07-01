@@ -2,7 +2,7 @@
 
 # 🦆 Ducky AI Assistant
 
-Your intelligent terminal-based coding companion, inspired by Claude Code but with a friendly duck personality!
+Your intelligent terminal-based coding companion, a friendly duck personality!
 
 ## ✨ Features
 
